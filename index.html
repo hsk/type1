@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Type1 : typing compiler" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Type1</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/hsk/type1">View on GitHub</a>
+
+          <h1 id="project_title">Type1</h1>
+          <h2 id="project_tagline">typing compiler</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/hsk/type1/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/hsk/type1/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>型付きコンパイラを作ろう</h1>
+
+<h2>1. はじめに</h2>
+
+<p>コンパイラの作成は、昔は、１パスの高速なコンパイラが主流でした。
+しかし、現在では、関数型言語のパターンマッチを用いたコンパイラ作りが主流となりつつあります。
+そこで、関数型言語の機能を持ったScalaを使ってコンパイラを作ります。
+ワンパスなコンパイラに比べると重い作りになっていますが、
+複数パスで作る事で分かりやすく最適化も考慮に入れた作りとなっています。
+前回作った言語はint型しかサポートしていませんでした。
+今回は char, short, int, long, float, double の複数の型を持った言語を作成します。
+まだ、配列や構造体がないので実用言語とは言えないかも知れませんが、
+暗黙の型変換、型推論、型付きのコンパイラ作成を学ぶ事が出来ます。</p>
+
+<p>この文書はmarkdownで記述しました。chromeのアプリケーションを使う事で、
+リアルタイムに表示しながら気軽に記述することが出来ました。</p>
+
+<h2>2. アセンブラを複数の型に対応する</h2>
+
+<h3>2.0. サイズ</h3>
+
+<h3>2.1. 足し算</h3>
+
+<p>// test_type.c</p>
+
+<pre><code>char char_add(char a, char b) {
+    char r = a + b;
+    return r;
+}
+</code></pre>
+
+<p>以上のような関数を作って</p>
+
+<pre><code>gcc -S test_add.c 
+</code></pre>
+
+<p>としてコンパイルし、整形してみます。</p>
+
+<pre><code>; test_add.S
+movb
+movb
+</code></pre>
+
+<h3>2.2. 引き算</h3>
+
+<h3>2.3. かけ算</h3>
+
+<h3>2.4. 割り算</h3>
+
+<h3>2.5. 余り</h3>
+
+<h3>2.6. キャスト</h3>
+
+<h3>2.7. 即値</h3>
+
+<p>そろそろテストをしたいのですが、現状の機能ではテストが出来ません。
+テストをするには、即値をコンパイルできないといけません。
+また、結果を出力出来ると良いです。</p>
+
+<p>そこで、2.7では即値のコンパイルを 2.8ではprintを出来るようにします。</p>
+
+<h3>2.7. print</h3>
+
+<p>そこから、計算して、表示する。</p>
+
+<h3>2.8. テスト</h3>
+
+<p>さて、ずいぶん沢山実装したので、間違いがあるかも知れません。
+そこで、しっかりとテストをしましょう。</p>
+
+<h4>問題</h4>
+
+<h5>型をどう持つか？</h5>
+
+<p>どうしよう？</p>
+
+<h5>キャストをどう表現するか？</h5>
+
+<p>こまるよなぁ</p>
+
+<ul>
+<li>TyCon("cast",List(TyCon("Char",List()), TyCon("Short",List()))</li>
+<li>Cast(Char(3),TShort())</li>
+</ul><p>例えば、こんな感じ</p>
+
+<h4>プリミティブな型のキャスト</h4>
+
+<ul>
+<li>Char2Short</li>
+<li>Char2Int</li>
+<li>Char2Long</li>
+<li>Char2Float</li>
+<li><p>Char2Double</p></li>
+<li><p>Short2Char</p></li>
+<li><p>Short2Int</p></li>
+<li><p>Short2Long</p></li>
+<li><p>Short2Float</p></li>
+<li><p>Short2Double</p></li>
+<li><p>Int2Char</p></li>
+<li><p>Int2Short</p></li>
+<li><p>Int2Long</p></li>
+<li><p>Int2Float</p></li>
+<li><p>Int2Double</p></li>
+<li><p>Long2Char</p></li>
+<li><p>Long2Short</p></li>
+<li><p>Long2Int</p></li>
+<li><p>Long2Float</p></li>
+<li><p>Long2Double</p></li>
+<li><p>Float2Char</p></li>
+<li><p>Float2Short</p></li>
+<li><p>Float2Int</p></li>
+<li><p>Float2Long</p></li>
+<li><p>Float2Double</p></li>
+<li><p>Double2Char</p></li>
+<li><p>Double2Short</p></li>
+<li><p>Double2Int</p></li>
+<li><p>Double2Long</p></li>
+<li><p>Double2Float</p></li>
+</ul><p>そうすると、以上のコードが得られます。
+このようにして、コンパイラ結果を取得して、Scalaのコードに落として行きます。</p>
+
+<h2>3. 暗黙の型変換</h2>
+
+<p>implicitでどうするってはなし。</p>
+
+<h2>3. 構文木を複数の型に対応する</h2>
+
+<h2>4. 型推論</h2>
+
+<p>型推論の話は長くなるけどまぁ、しかたない。書く。</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Type1 maintained by <a href="https://github.com/hsk">hsk</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
